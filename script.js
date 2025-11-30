@@ -52,6 +52,20 @@ const algoDescriptions = {
         text: 'Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. It guarantees O(n log n) time complexity.',
         apps: 'E-commerce applications, external sorting (large data that doesn\'t fit in memory).',
         best: 'Linked lists, large datasets, stable sorting requirements.'
+    },
+    insertion: {
+        title: 'Insertion Sort',
+        complexity: 'O(n²)',
+        text: 'Insertion Sort builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort.',
+        apps: 'Small datasets, nearly sorted data.',
+        best: 'Small datasets, online algorithms (data arrives one by one).'
+    },
+    selection: {
+        title: 'Selection Sort',
+        complexity: 'O(n²)',
+        text: 'Selection Sort divides the input list into two parts: a sorted sublist of items which is built up from left to right at the front (left) of the list and a sublist of the remaining unsorted items.',
+        apps: 'Simple sorting where memory writes are expensive.',
+        best: 'Small lists, checking if everything is already sorted.'
     }
 };
 
@@ -83,6 +97,10 @@ function init() {
                 runQuickSort();
             } else if (algo === 'merge') {
                 runMergeSort();
+            } else if (algo === 'insertion') {
+                insertionSort();
+            } else if (algo === 'selection') {
+                selectionSort();
             }
         }
     });
@@ -470,6 +488,121 @@ async function merge(start, mid, end) {
         bars[x].classList.remove('merge-left');
         bars[x].classList.remove('merge-right');
     }
+}
+
+async function insertionSort() {
+    isSorting = true;
+    startBtn.disabled = true;
+    generateBtn.disabled = true;
+    algoSelect.disabled = true;
+    dataSelect.disabled = true;
+    stopBtn.disabled = false;
+
+    startTimer();
+
+    const bars = document.getElementsByClassName('bar');
+
+    // Mark first element as sorted
+    bars[0].classList.add('sorted');
+
+    for (let i = 1; i < array.length; i++) {
+        let j = i;
+
+        // Highlight element being inserted
+        bars[j].classList.add('insertion-compare');
+        await sleep(getDelay());
+
+        while (j > 0 && array[j] < array[j - 1]) {
+            // Compare
+            comparisons++;
+            updateStats();
+            playNote(array[j]);
+
+            // Swap
+            let temp = array[j];
+            array[j] = array[j - 1];
+            array[j - 1] = temp;
+
+            bars[j].style.height = array[j] + '%';
+            bars[j - 1].style.height = array[j - 1] + '%';
+
+            // Move highlight
+            bars[j].classList.remove('insertion-compare');
+            bars[j].classList.add('sorted'); // It's in the sorted partition now
+            bars[j - 1].classList.add('insertion-compare');
+
+            swaps++;
+            updateStats();
+            playNote(array[j - 1]);
+
+            await sleep(getDelay());
+            j--;
+        }
+
+        bars[j].classList.remove('insertion-compare');
+        bars[j].classList.add('sorted');
+
+        // Ensure all previous are marked sorted
+        for (let k = 0; k <= i; k++) {
+            bars[k].classList.add('sorted');
+        }
+    }
+
+    await finishSorting();
+}
+
+async function selectionSort() {
+    isSorting = true;
+    startBtn.disabled = true;
+    generateBtn.disabled = true;
+    algoSelect.disabled = true;
+    dataSelect.disabled = true;
+    stopBtn.disabled = false;
+
+    startTimer();
+
+    const bars = document.getElementsByClassName('bar');
+
+    for (let i = 0; i < array.length; i++) {
+        let minIdx = i;
+        bars[minIdx].classList.add('selection-min'); // Highlight initial min
+
+        for (let j = i + 1; j < array.length; j++) {
+            bars[j].classList.add('compare');
+            playNote(array[j]);
+            await sleep(getDelay());
+
+            comparisons++;
+            updateStats();
+
+            if (array[j] < array[minIdx]) {
+                bars[minIdx].classList.remove('selection-min');
+                minIdx = j;
+                bars[minIdx].classList.add('selection-min'); // New min
+                playNote(array[minIdx]);
+            }
+
+            bars[j].classList.remove('compare');
+        }
+
+        if (minIdx !== i) {
+            let temp = array[i];
+            array[i] = array[minIdx];
+            array[minIdx] = temp;
+
+            bars[i].style.height = array[i] + '%';
+            bars[minIdx].style.height = array[minIdx] + '%';
+
+            swaps++;
+            updateStats();
+            playNote(array[i]);
+        }
+
+        bars[minIdx].classList.remove('selection-min');
+        bars[i].classList.add('sorted');
+    }
+
+    await finishSorting();
 }
 
 async function finishSorting() {

@@ -11,6 +11,10 @@
     --bar-finished: #76ff03;
     --bar-merge-left: #ff4081;
     --bar-merge-right: #e040fb;
+    --bar-insertion-compare: #ffeb3b;
+    /* Yellow */
+    --bar-selection-min: #2979ff;
+    /* Blue */
     --warning-color: #ff9100;
 }
 
@@ -201,6 +205,16 @@ main {
     box-shadow: 0 0 15px rgba(224, 64, 251, 0.7);
 }
 
+.bar.insertion-compare {
+    background-color: var(--bar-insertion-compare);
+    box-shadow: 0 0 15px rgba(255, 235, 59, 0.7);
+}
+
+.bar.selection-min {
+    background-color: var(--bar-selection-min);
+    box-shadow: 0 0 15px rgba(41, 121, 255, 0.7);
+}
+
 .controls {
     background: rgba(30, 30, 30, 0.9);
     padding: 1.5rem;
@@ -213,7 +227,8 @@ main {
     flex-shrink: 0;
 }
 
-.btn, .dropdown {
+.btn,
+.dropdown {
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 8px;
@@ -240,7 +255,8 @@ main {
     color: var(--text-color);
 }
 
-.btn:hover:not(:disabled), .dropdown:hover {
+.btn:hover:not(:disabled),
+.dropdown:hover {
     background-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }

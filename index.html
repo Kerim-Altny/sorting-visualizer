@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <h1>Sorting Algorithm Visualizer</h1>
         <div id="algo-description">
-            <h3 id="algo-title-container"><span id="algo-title">Bubble Sort</span> <span id="algo-complexity" class="complexity"></span></h3>
-            <p id="algo-text">Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.</p>
+            <h3 id="algo-title-container"><span id="algo-title">Bubble Sort</span> <span id="algo-complexity"
+                    class="complexity"></span></h3>
+            <p id="algo-text">Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares
+                adjacent elements and swaps them if they are in the wrong order.</p>
             <div class="algo-details">
                 <p><strong>Applications:</strong> <span id="algo-apps">Educational purposes, simple graphics.</span></p>
                 <p><strong>Best Use:</strong> <span id="algo-best">Small datasets, nearly sorted data.</span></p>
@@ -43,19 +47,21 @@
             </select>
             <button id="generate-btn" class="btn">Generate</button>
         </div>
-        
+
         <div class="control-group">
             <select id="algo-select" class="dropdown">
                 <option value="bubble">Bubble Sort</option>
                 <option value="quick">Quick Sort</option>
                 <option value="merge">Merge Sort</option>
+                <option value="insertion">Insertion Sort</option>
+                <option value="selection">Selection Sort</option>
             </select>
         </div>
 
         <button id="start-btn" class="btn primary">Start Sorting</button>
         <button id="stop-btn" class="btn warning" disabled>Stop</button>
         <button id="mute-btn" class="btn">Mute</button>
-        
+
         <div class="control-group">
             <label for="speed-slider">Speed</label>
             <input type="range" id="speed-slider" min="1" max="100" value="50">
@@ -64,4 +70,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
