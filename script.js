@@ -2,6 +2,7 @@ const container = document.getElementById('visualizer-container');
 const generateBtn = document.getElementById('generate-btn');
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
+const muteBtn = document.getElementById('mute-btn');
 const speedSlider = document.getElementById('speed-slider');
 const timerElement = document.getElementById('timer');
 const statusText = document.getElementById('status-text');
@@ -18,12 +19,16 @@ const algoBest = document.getElementById('algo-best');
 let array = [];
 let isSorting = false;
 let isPaused = false;
+let isMuted = false;
 let speed = 50;
 let timerInterval;
 let startTime;
 let elapsedTime = 0;
 let comparisons = 0;
 let swaps = 0;
+
+// Web Audio API Context
+let audioCtx = null;
 
 const algoDescriptions = {
     bubble: {
@@ -35,14 +40,14 @@ const algoDescriptions = {
     },
     quick: {
         title: 'Quick Sort',
-        complexity: '(O(n log n))',
+        complexity: 'O(n log n)',
         text: 'Quick Sort is a highly efficient divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. It is one of the fastest sorting algorithms in practice.',
         apps: 'Commercial computing, language standard libraries (e.g., C++ std::sort), large datasets.',
         best: 'Large datasets, arrays (good cache locality), when average-case performance matters.'
     },
     merge: {
         title: 'Merge Sort',
-        complexity: '(O(n log n))',
+        complexity: 'O(n log n)',
         text: 'Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. It guarantees O(n log n) time complexity.',
         apps: 'E-commerce applications, external sorting (large data that doesn\'t fit in memory).',
         best: 'Linked lists, large datasets, stable sorting requirements.'
@@ -65,6 +70,10 @@ function init() {
     });
     startBtn.addEventListener('click', () => {
         if (!isSorting) {
+            // Initialize Audio Context on user interaction
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
             resetStats();
             const algo = algoSelect.value;
             if (algo === 'bubble') {
@@ -89,6 +98,10 @@ function init() {
             }
         }
     });
+    muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
+    });
     speedSlider.addEventListener('input', (e) => {
         const val = parseInt(e.target.value);
         speed = 101 - val;
@@ -96,6 +109,28 @@ function init() {
     algoSelect.addEventListener('change', (e) => {
         updateDescription(e.target.value);
     });
+}
+
+function playNote(value) {
+    if (isMuted || !audioCtx) return;
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    // Map value (5-95) to frequency (200Hz - 800Hz)
+    const frequency = 200 + (value * 6);
+
+    oscillator.type = 'sine'; // Soft sound
+    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+    gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Low volume
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); // Short decay
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1);
 }
 
 function updateDescription(algo) {
@@ -120,18 +155,14 @@ function generateArray() {
         }
     } else if (type === 'reversed') {
         for (let i = 0; i < numBars; i++) {
-            // Generate sorted descending
-            // Map i (0 to 49) to value (95 to 5)
             const value = 95 - (i * (90 / numBars));
             array.push(Math.floor(value));
         }
     } else if (type === 'nearly') {
-        // Generate sorted ascending
         for (let i = 0; i < numBars; i++) {
             const value = 5 + (i * (90 / numBars));
             array.push(Math.floor(value));
         }
-        // Swap 5-6 pairs
         for (let k = 0; k < 6; k++) {
             const idx1 = Math.floor(Math.random() * numBars);
             const idx2 = Math.floor(Math.random() * numBars);
@@ -141,7 +172,6 @@ function generateArray() {
         }
     }
 
-    // Render bars
     for (let i = 0; i < numBars; i++) {
         const bar = document.createElement('div');
         bar.classList.add('bar');
@@ -206,6 +236,7 @@ async function bubbleSort() {
             bars[j].classList.add('compare');
             bars[j + 1].classList.add('compare');
 
+            playNote(array[j]); // Play sound on compare
             await sleep(getDelay());
 
             comparisons++;
@@ -219,6 +250,7 @@ async function bubbleSort() {
                 bars[j].style.height = array[j] + '%';
                 bars[j + 1].style.height = array[j + 1] + '%';
 
+                playNote(array[j]); // Play sound on swap
                 swaps++;
                 updateStats();
             }
@@ -272,6 +304,7 @@ async function partition(start, end) {
 
     for (let i = start; i < end; i++) {
         bars[i].classList.add('compare');
+        playNote(array[i]); // Play sound on compare
         await sleep(getDelay());
 
         comparisons++;
@@ -285,6 +318,7 @@ async function partition(start, end) {
             bars[i].style.height = array[i] + '%';
             bars[pivotIndex].style.height = array[pivotIndex] + '%';
 
+            playNote(array[i]); // Play sound on swap
             swaps++;
             updateStats();
 
@@ -301,6 +335,7 @@ async function partition(start, end) {
     bars[pivotIndex].style.height = array[pivotIndex] + '%';
     bars[end].style.height = array[end] + '%';
 
+    playNote(array[pivotIndex]); // Play sound on pivot swap
     swaps++;
     updateStats();
 
@@ -359,6 +394,7 @@ async function merge(start, mid, end) {
     while (i < left.length && j < right.length) {
         bars[start + i].classList.add('compare');
         bars[mid + 1 + j].classList.add('compare');
+        playNote(left[i]); // Play sound on compare
         await sleep(getDelay());
 
         comparisons++;
@@ -368,11 +404,13 @@ async function merge(start, mid, end) {
             array[k] = left[i];
             bars[k].style.height = array[k] + '%';
             bars[k].classList.add('sorted');
+            playNote(array[k]); // Play sound on write
             i++;
         } else {
             array[k] = right[j];
             bars[k].style.height = array[k] + '%';
             bars[k].classList.add('sorted');
+            playNote(array[k]); // Play sound on write
             j++;
         }
 
@@ -391,6 +429,7 @@ async function merge(start, mid, end) {
         array[k] = left[i];
         bars[k].style.height = array[k] + '%';
         bars[k].classList.add('sorted');
+        playNote(array[k]);
         swaps++;
         updateStats();
         await sleep(getDelay() / 2);
@@ -403,6 +442,7 @@ async function merge(start, mid, end) {
         array[k] = right[j];
         bars[k].style.height = array[k] + '%';
         bars[k].classList.add('sorted');
+        playNote(array[k]);
         swaps++;
         updateStats();
         await sleep(getDelay() / 2);
@@ -428,6 +468,7 @@ async function finishSorting() {
     for (let i = 0; i < bars.length; i++) {
         bars[i].classList.remove('sorted');
         bars[i].classList.add('finished');
+        playNote(array[i]); // Play satisfying finish scale
         await sleep(20);
     }
 
