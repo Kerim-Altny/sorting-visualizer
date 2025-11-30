@@ -26,6 +26,7 @@ let startTime;
 let elapsedTime = 0;
 let comparisons = 0;
 let swaps = 0;
+let lastPlayedTime = 0;
 
 // Web Audio API Context
 let audioCtx = null;
@@ -114,6 +115,14 @@ function init() {
 function playNote(value) {
     if (isMuted || !audioCtx) return;
 
+    const delay = getDelay();
+    const now = Date.now();
+
+    // Throttling: If speed is fast (delay < 50ms), limit sounds to every 50ms
+    if (delay < 50 && now - lastPlayedTime < 50) {
+        return;
+    }
+
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
 
@@ -123,14 +132,20 @@ function playNote(value) {
     oscillator.type = 'sine'; // Soft sound
     oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
 
+    // Dynamic duration: Shorten sound at high speeds
+    // Minimum 0.02s, Maximum 0.1s
+    const duration = Math.min(0.1, Math.max(0.02, delay / 1000));
+
     gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Low volume
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); // Short decay
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
 
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
     oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.1);
+    oscillator.stop(audioCtx.currentTime + duration);
+
+    lastPlayedTime = now;
 }
 
 function updateDescription(algo) {
