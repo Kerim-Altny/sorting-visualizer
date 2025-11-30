@@ -2,18 +2,15 @@
 
 ## Changes
 - **Updated index.html**:
-    - Added "Stop" button to controls.
+    - Added placeholders for "Applications" and "Best Use" in the description panel.
 - **Updated style.css**:
-    - Styled "Stop" button with warning color (Orange).
+    - Styled the new details section with a separator and lighter text color.
 - **Updated script.js**:
-    - Implemented isPaused state.
-    - Updated sleep function to wait while paused.
-    - Updated startTimer to resume from correct elapsed time.
-    - Stop button toggles between "Stop" and "Resume".
+    - Expanded lgoDescriptions to include pps and est fields.
+    - Updated updateDescription to populate these new fields.
 
 ## Verification Results
 - **Manual Testing**:
-    - **Stop**: Pauses animation and timer immediately.
-    - **Resume**: Resumes animation and timer from where it left off.
-    - **Logic**: Sorting continues correctly after resume.
-    - **UI**: Button text updates correctly.
+    - **Bubble Sort Info**: Displays educational apps and small dataset usage.
+    - **Quick Sort Info**: Displays commercial apps and large dataset usage.
+    - **Dynamic Update**: Info changes instantly when switching algorithms.

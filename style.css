@@ -9,7 +9,7 @@
     --bar-sorted: #00e676;
     --bar-pivot: #9d4edd;
     --bar-finished: #76ff03;
-    --warning-color: #ff9100; /* Orange for Stop/Pause */
+    --warning-color: #ff9100;
 }
 
 * {
@@ -52,23 +52,38 @@ header h1 {
 
 #algo-description {
     background: rgba(255, 255, 255, 0.05);
-    padding: 10px 20px;
+    padding: 15px 25px;
     border-radius: 8px;
-    max-width: 600px;
+    max-width: 700px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #algo-title {
     color: var(--primary-color);
-    font-size: 1rem;
-    margin-bottom: 5px;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
 }
 
 #algo-text {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.algo-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.algo-details strong {
+    color: var(--secondary-color);
 }
 
 main {

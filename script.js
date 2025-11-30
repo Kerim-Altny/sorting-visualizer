@@ -10,6 +10,8 @@ const compCountElement = document.getElementById('comp-count');
 const swapCountElement = document.getElementById('swap-count');
 const algoTitle = document.getElementById('algo-title');
 const algoText = document.getElementById('algo-text');
+const algoApps = document.getElementById('algo-apps');
+const algoBest = document.getElementById('algo-best');
 
 let array = [];
 let isSorting = false;
@@ -24,16 +26,22 @@ let swaps = 0;
 const algoDescriptions = {
     bubble: {
         title: 'Bubble Sort',
-        text: 'Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. It is known for its simplicity but is inefficient for large lists.'
+        text: 'Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. It is known for its simplicity but is inefficient for large lists.',
+        apps: 'Educational purposes, computer graphics (detecting small errors).',
+        best: 'Small datasets, nearly sorted data, teaching sorting concepts.'
     },
     quick: {
         title: 'Quick Sort',
-        text: 'Quick Sort is a highly efficient divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. It is one of the fastest sorting algorithms in practice.'
+        text: 'Quick Sort is a highly efficient divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. It is one of the fastest sorting algorithms in practice.',
+        apps: 'Commercial computing, language standard libraries (e.g., C++ std::sort), large datasets.',
+        best: 'Large datasets, arrays (good cache locality), when average-case performance matters.'
     }
 };
 
 function init() {
     generateArray();
+    updateDescription('bubble'); // Set initial description
+    
     shuffleBtn.addEventListener('click', () => {
         if (!isSorting) {
             generateArray();
@@ -58,12 +66,10 @@ function init() {
     stopBtn.addEventListener('click', () => {
         if (isSorting) {
             if (isPaused) {
-                // Resume
                 isPaused = false;
                 stopBtn.textContent = 'Stop';
                 startTimer();
             } else {
-                // Pause
                 isPaused = true;
                 stopBtn.textContent = 'Resume';
                 stopTimer();
@@ -75,10 +81,16 @@ function init() {
         speed = 101 - val; 
     });
     algoSelect.addEventListener('change', (e) => {
-        const algo = e.target.value;
-        algoTitle.textContent = algoDescriptions[algo].title;
-        algoText.textContent = algoDescriptions[algo].text;
+        updateDescription(e.target.value);
     });
+}
+
+function updateDescription(algo) {
+    const data = algoDescriptions[algo];
+    algoTitle.textContent = data.title;
+    algoText.textContent = data.text;
+    algoApps.textContent = data.apps;
+    algoBest.textContent = data.best;
 }
 
 function generateArray() {
@@ -97,7 +109,6 @@ function generateArray() {
 }
 
 async function sleep(ms) {
-    // If paused, wait until unpaused
     while (isPaused) {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
