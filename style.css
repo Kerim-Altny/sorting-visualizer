@@ -9,6 +9,8 @@
     --bar-sorted: #00e676;
     --bar-pivot: #9d4edd;
     --bar-finished: #76ff03;
+    --bar-merge-left: #ff4081;
+    --bar-merge-right: #e040fb;
     --warning-color: #ff9100;
 }
 
@@ -59,10 +61,20 @@ header h1 {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+#algo-title-container {
+    margin-bottom: 8px;
+}
+
 #algo-title {
     color: var(--primary-color);
     font-size: 1.1rem;
-    margin-bottom: 8px;
+}
+
+.complexity {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-left: 10px;
+    font-weight: 400;
 }
 
 #algo-text {
@@ -177,6 +189,16 @@ main {
 .bar.finished {
     background-color: var(--bar-finished) !important;
     box-shadow: 0 0 20px rgba(118, 255, 3, 0.8);
+}
+
+.bar.merge-left {
+    background-color: var(--bar-merge-left);
+    box-shadow: 0 0 15px rgba(255, 64, 129, 0.7);
+}
+
+.bar.merge-right {
+    background-color: var(--bar-merge-right);
+    box-shadow: 0 0 15px rgba(224, 64, 251, 0.7);
 }
 
 .controls {

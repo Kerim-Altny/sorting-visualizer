@@ -1,14 +1,16 @@
 const container = document.getElementById('visualizer-container');
-const shuffleBtn = document.getElementById('shuffle-btn');
+const generateBtn = document.getElementById('generate-btn');
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
 const speedSlider = document.getElementById('speed-slider');
 const timerElement = document.getElementById('timer');
 const statusText = document.getElementById('status-text');
 const algoSelect = document.getElementById('algo-select');
+const dataSelect = document.getElementById('data-select');
 const compCountElement = document.getElementById('comp-count');
 const swapCountElement = document.getElementById('swap-count');
 const algoTitle = document.getElementById('algo-title');
+const algoComplexity = document.getElementById('algo-complexity');
 const algoText = document.getElementById('algo-text');
 const algoApps = document.getElementById('algo-apps');
 const algoBest = document.getElementById('algo-best');
@@ -26,23 +28,32 @@ let swaps = 0;
 const algoDescriptions = {
     bubble: {
         title: 'Bubble Sort',
+        complexity: 'O(n²)',
         text: 'Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. It is known for its simplicity but is inefficient for large lists.',
         apps: 'Educational purposes, computer graphics (detecting small errors).',
         best: 'Small datasets, nearly sorted data, teaching sorting concepts.'
     },
     quick: {
         title: 'Quick Sort',
+        complexity: '(O(n log n))',
         text: 'Quick Sort is a highly efficient divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. It is one of the fastest sorting algorithms in practice.',
         apps: 'Commercial computing, language standard libraries (e.g., C++ std::sort), large datasets.',
         best: 'Large datasets, arrays (good cache locality), when average-case performance matters.'
+    },
+    merge: {
+        title: 'Merge Sort',
+        complexity: '(O(n log n))',
+        text: 'Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. It guarantees O(n log n) time complexity.',
+        apps: 'E-commerce applications, external sorting (large data that doesn\'t fit in memory).',
+        best: 'Linked lists, large datasets, stable sorting requirements.'
     }
 };
 
 function init() {
     generateArray();
-    updateDescription('bubble'); // Set initial description
-    
-    shuffleBtn.addEventListener('click', () => {
+    updateDescription('bubble');
+
+    generateBtn.addEventListener('click', () => {
         if (!isSorting) {
             generateArray();
             resetStats();
@@ -60,6 +71,8 @@ function init() {
                 bubbleSort();
             } else if (algo === 'quick') {
                 runQuickSort();
+            } else if (algo === 'merge') {
+                runMergeSort();
             }
         }
     });
@@ -78,7 +91,7 @@ function init() {
     });
     speedSlider.addEventListener('input', (e) => {
         const val = parseInt(e.target.value);
-        speed = 101 - val; 
+        speed = 101 - val;
     });
     algoSelect.addEventListener('change', (e) => {
         updateDescription(e.target.value);
@@ -88,6 +101,7 @@ function init() {
 function updateDescription(algo) {
     const data = algoDescriptions[algo];
     algoTitle.textContent = data.title;
+    algoComplexity.textContent = data.complexity;
     algoText.textContent = data.text;
     algoApps.textContent = data.apps;
     algoBest.textContent = data.best;
@@ -96,14 +110,42 @@ function updateDescription(algo) {
 function generateArray() {
     container.innerHTML = '';
     array = [];
-    const numBars = 50; 
-    
+    const numBars = 50;
+    const type = dataSelect.value;
+
+    if (type === 'random') {
+        for (let i = 0; i < numBars; i++) {
+            const value = Math.floor(Math.random() * 90) + 5;
+            array.push(value);
+        }
+    } else if (type === 'reversed') {
+        for (let i = 0; i < numBars; i++) {
+            // Generate sorted descending
+            // Map i (0 to 49) to value (95 to 5)
+            const value = 95 - (i * (90 / numBars));
+            array.push(Math.floor(value));
+        }
+    } else if (type === 'nearly') {
+        // Generate sorted ascending
+        for (let i = 0; i < numBars; i++) {
+            const value = 5 + (i * (90 / numBars));
+            array.push(Math.floor(value));
+        }
+        // Swap 5-6 pairs
+        for (let k = 0; k < 6; k++) {
+            const idx1 = Math.floor(Math.random() * numBars);
+            const idx2 = Math.floor(Math.random() * numBars);
+            let temp = array[idx1];
+            array[idx1] = array[idx2];
+            array[idx2] = temp;
+        }
+    }
+
+    // Render bars
     for (let i = 0; i < numBars; i++) {
-        const value = Math.floor(Math.random() * 90) + 5; 
-        array.push(value);
         const bar = document.createElement('div');
         bar.classList.add('bar');
-        bar.style.height = value + '%';
+        bar.style.height = array[i] + '%';
         container.appendChild(bar);
     }
 }
@@ -116,7 +158,7 @@ async function sleep(ms) {
 }
 
 function getDelay() {
-    return speed * 2; 
+    return speed * 2;
 }
 
 function startTimer() {
@@ -150,64 +192,66 @@ function updateStats() {
 async function bubbleSort() {
     isSorting = true;
     startBtn.disabled = true;
-    shuffleBtn.disabled = true;
+    generateBtn.disabled = true;
     algoSelect.disabled = true;
+    dataSelect.disabled = true;
     stopBtn.disabled = false;
-    
+
     startTimer();
-    
+
     const bars = document.getElementsByClassName('bar');
-    
+
     for (let i = 0; i < array.length; i++) {
         for (let j = 0; j < array.length - i - 1; j++) {
             bars[j].classList.add('compare');
             bars[j + 1].classList.add('compare');
-            
+
             await sleep(getDelay());
-            
+
             comparisons++;
             updateStats();
-            
+
             if (array[j] > array[j + 1]) {
                 let temp = array[j];
                 array[j] = array[j + 1];
                 array[j + 1] = temp;
-                
+
                 bars[j].style.height = array[j] + '%';
                 bars[j + 1].style.height = array[j + 1] + '%';
-                
+
                 swaps++;
                 updateStats();
             }
-            
+
             bars[j].classList.remove('compare');
             bars[j + 1].classList.remove('compare');
         }
         bars[array.length - i - 1].classList.add('sorted');
     }
-    for(let k=0; k < bars.length; k++) {
+    for (let k = 0; k < bars.length; k++) {
         bars[k].classList.add('sorted');
     }
-    
+
     await finishSorting();
 }
 
 async function runQuickSort() {
     isSorting = true;
     startBtn.disabled = true;
-    shuffleBtn.disabled = true;
+    generateBtn.disabled = true;
     algoSelect.disabled = true;
+    dataSelect.disabled = true;
     stopBtn.disabled = false;
-    
+
     startTimer();
-    
+
     await quickSort(0, array.length - 1);
-    
+
     const bars = document.getElementsByClassName('bar');
-    for(let k=0; k < bars.length; k++) {
+    for (let k = 0; k < bars.length; k++) {
         bars[k].classList.add('sorted');
     }
-    
+
     await finishSorting();
 }
 
@@ -223,46 +267,154 @@ async function partition(start, end) {
     const bars = document.getElementsByClassName('bar');
     let pivotValue = array[end];
     let pivotIndex = start;
-    
+
     bars[end].classList.add('pivot');
-    
+
     for (let i = start; i < end; i++) {
         bars[i].classList.add('compare');
         await sleep(getDelay());
-        
+
         comparisons++;
         updateStats();
-        
+
         if (array[i] < pivotValue) {
             let temp = array[i];
             array[i] = array[pivotIndex];
             array[pivotIndex] = temp;
-            
+
             bars[i].style.height = array[i] + '%';
             bars[pivotIndex].style.height = array[pivotIndex] + '%';
-            
+
             swaps++;
             updateStats();
-            
+
             pivotIndex++;
         }
-        
+
         bars[i].classList.remove('compare');
     }
-    
+
     let temp = array[pivotIndex];
     array[pivotIndex] = array[end];
     array[end] = temp;
-    
+
     bars[pivotIndex].style.height = array[pivotIndex] + '%';
     bars[end].style.height = array[end] + '%';
-    
-    swaps++; 
+
+    swaps++;
     updateStats();
-    
+
     bars[end].classList.remove('pivot');
-    
+
     return pivotIndex;
+}
+
+async function runMergeSort() {
+    isSorting = true;
+    startBtn.disabled = true;
+    generateBtn.disabled = true;
+    algoSelect.disabled = true;
+    dataSelect.disabled = true;
+    stopBtn.disabled = false;
+
+    startTimer();
+
+    await mergeSort(0, array.length - 1);
+
+    const bars = document.getElementsByClassName('bar');
+    for (let k = 0; k < bars.length; k++) {
+        bars[k].classList.add('sorted');
+    }
+
+    await finishSorting();
+}
+
+async function mergeSort(start, end) {
+    if (start >= end) return;
+
+    const mid = Math.floor((start + end) / 2);
+
+    await mergeSort(start, mid);
+    await mergeSort(mid + 1, end);
+    await merge(start, mid, end);
+}
+
+async function merge(start, mid, end) {
+    const bars = document.getElementsByClassName('bar');
+
+    for (let i = start; i <= mid; i++) {
+        bars[i].classList.add('merge-left');
+    }
+    for (let i = mid + 1; i <= end; i++) {
+        bars[i].classList.add('merge-right');
+    }
+
+    await sleep(getDelay());
+
+    let left = array.slice(start, mid + 1);
+    let right = array.slice(mid + 1, end + 1);
+
+    let i = 0, j = 0, k = start;
+
+    while (i < left.length && j < right.length) {
+        bars[start + i].classList.add('compare');
+        bars[mid + 1 + j].classList.add('compare');
+        await sleep(getDelay());
+
+        comparisons++;
+        updateStats();
+
+        if (left[i] <= right[j]) {
+            array[k] = left[i];
+            bars[k].style.height = array[k] + '%';
+            bars[k].classList.add('sorted');
+            i++;
+        } else {
+            array[k] = right[j];
+            bars[k].style.height = array[k] + '%';
+            bars[k].classList.add('sorted');
+            j++;
+        }
+
+        swaps++;
+        updateStats();
+
+        bars[start + i] ? bars[start + i].classList.remove('compare') : null;
+        bars[mid + 1 + j] ? bars[mid + 1 + j].classList.remove('compare') : null;
+
+        await sleep(getDelay() / 2);
+        bars[k].classList.remove('sorted');
+        k++;
+    }
+
+    while (i < left.length) {
+        array[k] = left[i];
+        bars[k].style.height = array[k] + '%';
+        bars[k].classList.add('sorted');
+        swaps++;
+        updateStats();
+        await sleep(getDelay() / 2);
+        bars[k].classList.remove('sorted');
+        i++;
+        k++;
+    }
+
+    while (j < right.length) {
+        array[k] = right[j];
+        bars[k].style.height = array[k] + '%';
+        bars[k].classList.add('sorted');
+        swaps++;
+        updateStats();
+        await sleep(getDelay() / 2);
+        bars[k].classList.remove('sorted');
+        j++;
+        k++;
+    }
+
+    for (let x = start; x <= end; x++) {
+        bars[x].classList.remove('merge-left');
+        bars[x].classList.remove('merge-right');
+    }
 }
 
 async function finishSorting() {
@@ -271,17 +423,18 @@ async function finishSorting() {
     stopBtn.disabled = true;
     stopBtn.textContent = 'Stop';
     isPaused = false;
-    
+
     const bars = document.getElementsByClassName('bar');
     for (let i = 0; i < bars.length; i++) {
         bars[i].classList.remove('sorted');
         bars[i].classList.add('finished');
-        await sleep(20); 
+        await sleep(20);
     }
-    
+
     isSorting = false;
-    shuffleBtn.disabled = false;
+    generateBtn.disabled = false;
     algoSelect.disabled = false;
+    dataSelect.disabled = false;
 }
 
 init();
