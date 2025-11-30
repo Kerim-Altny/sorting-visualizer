@@ -66,6 +66,13 @@ const algoDescriptions = {
         text: 'Selection Sort divides the input list into two parts: a sorted sublist of items which is built up from left to right at the front (left) of the list and a sublist of the remaining unsorted items.',
         apps: 'Simple sorting where memory writes are expensive.',
         best: 'Small lists, checking if everything is already sorted.'
+    },
+    heap: {
+        title: 'Heap Sort',
+        complexity: 'O(n log n)',
+        text: 'Heap Sort is a comparison-based sorting algorithm. Heap sort can be thought of as an improved selection sort: like selection sort, heap sort divides its input into a sorted and an unsorted region, and it iteratively shrinks the unsorted region by extracting the largest element from it and inserting it into the sorted region.',
+        apps: 'Systems concerned with security and embedded systems (O(1) auxiliary space).',
+        best: 'When O(n log n) is required with O(1) space.'
     }
 };
 
@@ -101,6 +108,8 @@ function init() {
                 insertionSort();
             } else if (algo === 'selection') {
                 selectionSort();
+            } else if (algo === 'heap') {
+                heapSort();
             }
         }
     });
@@ -605,6 +614,110 @@ async function selectionSort() {
     await finishSorting();
 }
 
+async function heapSort() {
+    isSorting = true;
+    startBtn.disabled = true;
+    generateBtn.disabled = true;
+    algoSelect.disabled = true;
+    dataSelect.disabled = true;
+    stopBtn.disabled = false;
+
+    startTimer();
+
+    const bars = document.getElementsByClassName('bar');
+    const n = array.length;
+
+    // Build Max Heap
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        await heapify(n, i);
+    }
+
+    // Extract elements
+    for (let i = n - 1; i > 0; i--) {
+        // Highlight swap (Purple)
+        bars[0].classList.add('heap-swap');
+        bars[i].classList.add('heap-swap');
+        playNote(array[0]);
+        await sleep(getDelay());
+
+        // Swap
+        let temp = array[0];
+        array[0] = array[i];
+        array[i] = temp;
+
+        bars[0].style.height = array[0] + '%';
+        bars[i].style.height = array[i] + '%';
+
+        swaps++;
+        updateStats();
+        playNote(array[i]);
+
+        bars[0].classList.remove('heap-swap');
+        bars[i].classList.remove('heap-swap');
+
+        // Mark as sorted (Dark Green)
+        bars[i].classList.add('heap-sorted');
+
+        await heapify(i, 0);
+    }
+
+    // Mark the last remaining element (index 0) as sorted
+    bars[0].classList.add('heap-sorted');
+
+    await finishSorting();
+}
+
+async function heapify(n, i) {
+    const bars = document.getElementsByClassName('bar');
+    let largest = i;
+    let left = 2 * i + 1;
+    let right = 2 * i + 2;
+
+    // Highlight comparison
+    bars[i].classList.add('compare');
+    if (left < n) bars[left].classList.add('compare');
+    if (right < n) bars[right].classList.add('compare');
+
+    await sleep(getDelay());
+
+    if (left < n) {
+        comparisons++;
+        updateStats();
+        if (array[left] > array[largest]) {
+            largest = left;
+        }
+    }
+
+    if (right < n) {
+        comparisons++;
+        updateStats();
+        if (array[right] > array[largest]) {
+            largest = right;
+        }
+    }
+
+    // Remove comparison highlight
+    bars[i].classList.remove('compare');
+    if (left < n) bars[left].classList.remove('compare');
+    if (right < n) bars[right].classList.remove('compare');
+
+    if (largest !== i) {
+        // Swap
+        let temp = array[i];
+        array[i] = array[largest];
+        array[largest] = temp;
+
+        bars[i].style.height = array[i] + '%';
+        bars[largest].style.height = array[largest] + '%';
+
+        swaps++;
+        updateStats();
+        playNote(array[i]);
+
+        await heapify(n, largest);
+    }
+}
+
 async function finishSorting() {
     stopTimer();
     statusText.textContent = algoSelect.options[algoSelect.selectedIndex].text + ' Completed!';
@@ -615,6 +728,7 @@ async function finishSorting() {
     const bars = document.getElementsByClassName('bar');
     for (let i = 0; i < bars.length; i++) {
         bars[i].classList.remove('sorted');
+        bars[i].classList.remove('heap-sorted');
         bars[i].classList.add('finished');
         playNote(array[i]); // Play satisfying finish scale
         await sleep(20);

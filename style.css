@@ -15,6 +15,10 @@
     /* Yellow */
     --bar-selection-min: #2979ff;
     /* Blue */
+    --bar-heap-swap: #9c27b0;
+    /* Purple */
+    --bar-heap-sorted: #1b5e20;
+    /* Dark Green */
     --warning-color: #ff9100;
 }
 
@@ -213,6 +217,16 @@ main {
 .bar.selection-min {
     background-color: var(--bar-selection-min);
     box-shadow: 0 0 15px rgba(41, 121, 255, 0.7);
+}
+
+.bar.heap-swap {
+    background-color: var(--bar-heap-swap);
+    box-shadow: 0 0 15px rgba(156, 39, 176, 0.7);
+}
+
+.bar.heap-sorted {
+    background-color: var(--bar-heap-sorted) !important;
+    box-shadow: 0 0 15px rgba(27, 94, 32, 0.7);
 }
 
 .controls {
