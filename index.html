@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Sorting Algorithm Visualizer</h1>
+        <div id="algo-description">
+            <h3 id="algo-title">Bubble Sort</h3>
+            <p id="algo-text">Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.</p>
+        </div>
+    </header>
+
+    <main>
+        <div id="status-panel">
+            <div class="stats-container">
+                <span id="timer">Time: 0.00s</span>
+                <span id="comp-count">Comparisons: 0</span>
+                <span id="swap-count">Swaps: 0</span>
+            </div>
+            <span id="status-text"></span>
+        </div>
+        <div id="visualizer-container"></div>
+    </main>
+
+    <footer class="controls">
+        <button id="shuffle-btn" class="btn">Shuffle Array</button>
+        
+        <div class="control-group">
+            <select id="algo-select" class="dropdown">
+                <option value="bubble">Bubble Sort</option>
+                <option value="quick">Quick Sort</option>
+            </select>
+        </div>
+
+        <button id="start-btn" class="btn primary">Start Sorting</button>
+        <button id="stop-btn" class="btn warning" disabled>Stop</button>
+        
+        <div class="control-group">
+            <label for="speed-slider">Speed</label>
+            <input type="range" id="speed-slider" min="1" max="100" value="50">
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
