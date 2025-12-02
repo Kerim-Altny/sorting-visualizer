@@ -1,7 +1,9 @@
 # 🎨 Sorting Algorithm Visualizer
 
 ![Project Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![Tech Stack](https://img.shields.io/badge/HTML5-CSS3-JavaScript-yellow?style=for-the-badge)
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 ![Deployment](https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-blue?style=for-the-badge&logo=github)
 
 > An interactive web application visualizing sorting algorithms, illustrating their mechanics, time complexities, and performance differences.
