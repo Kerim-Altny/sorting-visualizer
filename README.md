@@ -38,9 +38,11 @@ The goal was not just to write code, but to create a visual and auditory experie
 
 ## 🛠️ Technologies
 
-* **Frontend:** HTML5, CSS3 (Responsive Design), Vanilla JavaScript (ES6+)
-* **Tooling:** Git, Cursor (AI Editor)
+* **Frontend:** HTML5 (Semantic), CSS3 (Glassmorphism & Desktop First), Vanilla JavaScript 
+* **Sound:** Web Audio API (Dynamic Sonification)
+* **Tooling:** Git, AI-Assisted Development (Antigravity)
 * **Hosting:** GitHub Pages
+
 
 ## 🚀 Installation (Local)
 
@@ -48,13 +50,16 @@ To run this project locally:
 
 1.  Clone the repository:
     ```bash
-    git clone [https://github.com/Kerim-Altny/sorting-visualizer.git](https://github.com/Kerim-Altny/sorting-visualizer.git)
+    git clone https://github.com/Kerim-Altny/sorting-visualizer.git
     ```
 2.  Navigate to the directory:
     ```bash
     cd sorting-visualizer
     ```
-3.  Open `index.html` in your browser. (No extra dependencies or `npm install` required).
+3.  **Important:** Since this project uses **ES Modules**, you need to serve it via a local web server (opening `index.html` directly as a file may cause CORS errors).
+    *   **VS Code:** Use the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension.
+    *   **Python:** Run `python -m http.server` in the directory.
+    *   **Node.js:** Run `npx serve .` or `npx live-server`.
 
 ---
 
