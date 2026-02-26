@@ -12,13 +12,13 @@
     --bar-merge-left: #ff4081;
     --bar-merge-right: #e040fb;
     --bar-insertion-compare: #ffeb3b;
-    /* Yellow */
+
     --bar-selection-min: #2979ff;
-    /* Blue */
+
     --bar-heap-swap: #9c27b0;
-    /* Purple */
+
     --bar-heap-sorted: #1b5e20;
-    /* Dark Green */
+
     --warning-color: #ff9100;
 }
 
@@ -57,6 +57,7 @@ header h1 {
     text-transform: uppercase;
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
